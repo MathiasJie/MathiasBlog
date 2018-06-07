@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <span th:include="common/header::header"></span>
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
+</head>
+<body class="beg-login-bg">
+<div class="beg-login-box">
+    <header>
+        <h1>后台登录</h1>
+    </header>
+    <div class="beg-login-main">
+        <form  action="/login/signin" class="layui-form" method="post">
+            <div class="layui-form-item">
+                <label class="beg-login-icon">
+                    <i class="fa fa-user fa-lg"></i>
+                </label>
+                <input type="text" name="username" lay-verify="username"  placeholder="请输入您的账号..." class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="beg-login-icon">
+                    <i class="fa fa-lock fa-lg"></i>
+                </label>
+                <input type="password" name="password" lay-verify="password" autocomplete="off" placeholder="请输入您的密码..." class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <div class="beg-pull-left beg-login-remember">
+                    <label>记住帐号？</label>
+                    <input type="checkbox" name="rememberMe" value="true" lay-skin="switch" checked title="记住帐号">
+                </div>
+            </div>
+            <div >
+                <div class="login_submit">
+                    <button class="login_submit" lay-submit lay-filter="login">
+                        立即登录
+                    </button>
+                </div>
+                <div class="beg-clear"></div>
+            </div>
+        </form>
+    </div>
+    <footer>
+        <p>Mathias © www.mathias.cn</p>
+    </footer>
+</div>
+<script type="text/javascript" th:src="@{/plugins/layui/layui.js}"></script>
+<script>
+    layui.use(['layer', 'form'], function() {
+        var layer = layui.layer,
+            $ = layui.jquery,
+            form = layui.form;
+
+        form.on('submit(login)',function(data){
+//					alert(data.field);
+            var user=data.field;
+            var action =data.form.action;
+            if(!data.field.username || !data.field.password ){
+                layer.msg("用户名和密码不能为空！");
+            }else {
+                $.ajax({
+                    url: action,
+                    data: user,
+                    type: "POST",
+                    dataType: "json",//以纯文本的形式返回
+                    success: function (result) {
+                        console.log(result);
+                        if (result.code === 200){
+                            // sessionStorage.setItem("token","Bearer "+result.token);
+                            location.href="/route/index";
+                        }
+                    },
+                    error:function () {
+                        layer.msg("登陆失败啦,请检查用户名或密码是否正确",{icon: 5,anim: 6});
+                    }
+                })
+            }
+            return false;
+        });
+    });
+</script>
+</body>
+
+</html>

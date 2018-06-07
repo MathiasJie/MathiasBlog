@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--引入公共头部-->
+<span th:replace="common/header :: header"></span>
+<body>
+<div class="layui-header"  th:fragment="top">
+    <div class="layui-logo">Mathias的后台管理系统</div>
+    <ul class="layui-nav layui-layout-right">
+        <li class="layui-nav-item">
+            <a href="javascript:">
+                <img th:src="@{/images/login_bg_4.jpg}" class="layui-nav-img"/>
+                <!--/*@thymesVar id="user" type="com"*/-->
+                <span>mathias</span>
+            </a>
+            <dl class="layui-nav-child">
+                <dd><a href="">
+                    <label>
+                        <i class="fa fa-id-badge fa-lg"></i>
+                    </label>基本资料</a></dd>
+                <dd><a href=""> <label>
+                    <i class="fa fa-cog fa-lg"></i>
+                </label>安全设置</a></dd>
+                <dd><a href="javascript:logout()">
+                    <label>
+                        <i class="fa fa-sign-out fa-lg"></i>
+                    </label>退出登陆</a></dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item" style="text-align: right;">
+            <a href=""> <label>
+                <i class="fa fa-envelope fa-lg "></i>
+            </label> <span class="layui-badge-dot layui-bg-red"></span></a>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

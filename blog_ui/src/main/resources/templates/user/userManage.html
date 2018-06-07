@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<span th:replace="common/header::header"></span>
+<body>
+<button class="layui-btn" id="addUser">
+    <label><i class="fa fa-plus-circle"></i></label> 新增
+</button>
+<button class="layui-btn layui-btn-normal" id="editUser">
+    <label><i class="fa fa-edit"></i></label> 编辑
+</button>
+<button class="layui-btn layui-btn-danger" id="delUser">
+    <label><i class="fa fa-trash-o"></i></label> 删除
+</button>
+<table id="userManage" style='overflow:scroll;overflow-x:hidden'></table>
+<script type="text/javascript" th:inline="none" th:src="@{/plugins/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{/utils/dateUtil.js}"></script>
+<script type="text/javascript">
+    layui.use(['jquery', 'laypage', 'layer', 'table', 'element'], function () {
+        //弹层
+        var layer = layui.layer,
+            table = layui.table,
+            $ = layui.jquery,
+            element = layui.element
+        $.ajax({
+            url: "/user/getUserList",
+            type: "POST",
+            dataType: "json",
+            success: function (res) {
+                console.log(res);
+                table.render({
+                    elem: "#userManage",
+                    id: 'userManage',
+                    height: 'full',
+                    cellMinWidth: 80,
+                    data: res.data.userList,
+                    page: true,
+                    limit: 10,
+                    cols: [
+                        [
+                            {checkbox: true},
+                            {field: 'id', title: '<strong>ID</strong>',align:'center',  sort: true},
+                            {field: 'username', title: '<strong>用户名</strong>', align:'center'},
+                            {field: 'nickName', title: '<strong>姓名</strong>',align:'center'},
+                            {field: 'mobile', title: '<strong>电话</strong>',align:'center'},
+                            {field: 'status', title: '<strong>允许登录</strong>',align:'center',templet:"#status"},
+                            {field: 'lastLoginIp', title: '<strong>最后登录IP</strong>',align:'center'},
+                            {field: 'lastLoginTime', title: '<strong>最后登录时间</strong>',align:'center',templet:'<div>{{Format(d.lastLoginTime,"yyyy-MM-dd hh:mm:ss")}}</div>'},
+                            {
+                                field: 'description', title: '<strong>角色</strong>',
+                                align:'center',templet: "#description"
+                            }
+                        ]
+                    ]
+                });
+            }
+        });
+        //          新增用户
+        $("#addUser").click(function () {
+            parent.layer.open({
+                type: 2,
+                title: '添加用户',
+                skin: 'layui-layer-molv', //加上边框
+                area: ['720px', '500px'], //宽高
+                content: ['/route/addUser', 'no']//no表示不显示滚动条
+            })
+        });
+//            编辑用户
+        $("#editUser").click(function () {
+            var checkStatus = table.checkStatus('userManage');
+            if (checkStatus.data.length === 0) {
+                parent.layer.msg("请选择一条数据进行编辑！",{icon:7,anim:6});
+            } else if (checkStatus.data.length > 1) {
+                parent.layer.msg("只能选择一条数据进行编辑！",{icon:7,anim:6});
+            } else {
+                parent.layer.open({
+                    type: 2,
+                    title: '基本资料',
+                    skin: 'layui-layer-molv', //加上边框
+                    area: ['720px', '500px'], //宽高
+                    content: ['/user/userInfo?id='+ checkStatus.data[0].id, 'no']//no表示不显示滚动条
+                })
+            }
+        });
+//            删除用户
+        $("#delUser").click(function () {
+            var checkStatus = table.checkStatus('userManage');
+            if (checkStatus.data.length === 0) {
+                parent.layer.msg("请选择要删除的数据！",{icon:7,anim:6});
+            } else {
+                parent.layer.confirm("你确定要删除选中的数据？", {icon: 3, title: "提示"}, function
+                    (index) {
+                    var list = [];
+                    for (var i in checkStatus.data) {
+                        var id = checkStatus.data[i].id;
+                        list.push(id);
+                    }
+                    var ids = list.join(",");
+                    $.post("/user/delUserById", {ids: ids}, function (res) {
+                        if (res.code === 200) {
+                        parent.layer.open({
+                                icon:1,
+                                content:res.msg,
+                                yes:function (index) {
+                                    // layer.close(index);
+                                    parent.location.reload();
+                                }
+                            })
+                        } else {
+                            parent.layer.close(index);
+                            layer.msg("删除失败，请联系管理员",{icon:5,anim:6});
+                        }
+                    })
+                })
+            }
+        })
+    });
+</script>
+<script type="text/html" id="description">
+    <span class="layui-table-text">{{d.roleList[0].description}}</span>
+</script>
+<script type="text/html" id="status">
+    {{#  if(d.status == 1){ }}
+    <span class="layui-table-text">允许</span>
+    {{#  } else { }}
+    <span class="layui-table-text">禁止</span>
+    {{#  } }}
+</script>
+</body>
+</html>

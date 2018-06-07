@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--引入公共头部-->
+<span th:replace="common/header :: header"></span>
+<body>
+<div class="layui-side layui-bg-cyan" th:fragment="left">
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" >
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><label>
+                        <i class="fa fa-sliders"></i></label> 博客管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;"><label>
+                            <i class="fa fa-paper-plane-o"></i>
+                        </label>导航管理</a></dd>
+                        <dd><a href="javascript:;"><label>
+                            <i class="fa fa-bookmark"></i>
+                        </label>文章分类</a></dd>
+                        <dd><a href="javascript:;"><label>
+                            <i class="fa fa-edit"></i>
+                        </label>文章管理</a></dd>
+                        <dd><a href="javascript:;"><label>
+                            <i class="fa fa-link"></i>
+                        </label>友情链接</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><label>
+                        <i class="fa fa-sitemap"></i>
+                    </label>用户权限</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="/route/userManage" target="right"><label>
+                            <i class="fa fa-user fa-fw"></i>
+                        </label>用户管理</a>
+                        </dd>
+                        <dd><a href="/route/roleManage" target="right"><label>
+                            <i class="fa fa-users"></i>
+                        </label>角色管理</a>
+                        <dd><a href="javascript:;" target="right"><label>
+                            <i class="fa fa-tree"></i>
+                        </label>资源管理</a></dd>
+
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><label>
+                        <i class="fa fa-th-large "></i>
+                    </label>系统管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;"><label>
+                            <i class="fa fa-line-chart"></i>
+                        </label>系统监控</a></dd>
+                        <dd><a href="javascript:;"><label>
+                            <i class="fa fa-file-text"></i>
+                        </label>系统日志</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

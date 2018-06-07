@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<span th:replace="common/header::header"></span>
+<body style="margin: 10px">
+<form class="layui-form">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">角色名</label>
+            <div class="layui-input-inline">
+                <input type="text" name="name" autocomplete="off" class="layui-input" placeholder="角色名"/>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">角色描述</label>
+            <div class="layui-input-inline">
+                <input type="text" name="description" autocomplete="off"
+                       class="layui-input" placeholder="角色描述"/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item" pane="">
+        <label class="layui-form-label">是否有效</label>
+        <div class="layui-input-block">
+            <input type="checkbox" checked="" name="available" lay-skin="switch" lay-text="有效|无效">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="" lay-filter="addRole">保存</button>
+            <button type="reset" class="layui-btn layui-btn-primary">清空</button>
+        </div>
+    </div>
+</form>
+<script type="text/javascript" th:inline="none" th:src="@{/plugins/layui/layui.js}"></script>
+<script type="text/javascript">
+    layui.use(['jquery','laydate','form','layer', 'element'], function () {
+        //弹层
+        var layer = layui.layer,
+            $ = layui.jquery,
+            form=layui.form,
+            element = layui.element,
+            laydate = layui.laydate
+        //日期
+        laydate.render({
+            elem: '#birthday'
+        });
+
+        // 新增用户
+        form.on('submit(addRole)', function (data) {
+            if (!data.field.name) {
+                parent.layer.msg("请填写角色名！",{icon:5,anim:6});
+                $("input[name='name']").focus();
+            } else {
+                if (data.field.available ==='on'){
+                    data.field.available = 1;
+                }
+                $.ajax({
+                    url: "/role/saveOrUpdate",
+                    data: data.field,
+                    method: "post",
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.code === 200) {
+                            layer.open({
+                                icon:1,
+                                content: res.msg,
+                                yes: function (index) {
+                                    location.reload();
+                                }
+                            })
+                        } else {
+                            layer.msg(res.msg,{icon: 5,anim: 6});
+                        }
+                    },
+                    error: function (msg) {
+                        layer.msg("角色添加失败，请联系管理员",{icon: 5,anim: 6})
+                    }
+                })
+            }
+            return false;
+        });
+    });
+</script>
+</body>
+</html>
