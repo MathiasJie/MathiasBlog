@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <span th:replace="common/header::header"></span>
 <body style="margin: 10px">
-<form class="layui-form">
+<form class="layui-form" id="addUser">
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">用户名</label>
@@ -90,12 +90,6 @@
         <!--</div>-->
     <!--</div>-->
 
-    <div class="layui-form-item">
-        <div class="layui-input-block">
-            <button class="layui-btn" lay-submit="" lay-filter="addUser">保存</button>
-            <button type="reset" class="layui-btn layui-btn-primary">清空</button>
-        </div>
-    </div>
 </form>
 <script type="text/javascript" th:inline="none" th:src="@{/plugins/layui/layui.js}"></script>
 <script type="text/javascript">
@@ -105,48 +99,12 @@
             $ = layui.jquery,
             form=layui.form,
             element = layui.element,
-            laydate = layui.laydate
+            laydate = layui.laydate;
         //日期
         laydate.render({
             elem: '#birthday'
         });
 
-        // 新增用户
-        form.on('submit(addUser)', function (data) {
-            if (!data.field.username) {
-                parent.layer.msg("请填写用户名！");
-                $("input[name='username']").focus();
-            } else if (!data.field.password) {
-                parent.layer.msg("请填写密码！");
-                $("input[name='password']").focus();
-            } else if (data.field.password !== data.field.rePassword) {
-                parent.layer.msg("两次输入密码不一致！");
-            } else {
-                $.ajax({
-                    url: "/user/saveOrUpdate",
-                    data: data.field,
-                    method: "post",
-                    dataType: 'json',
-                    success: function (res) {
-                        if (res.code === 200) {
-                            layer.open({
-                                icon:1,
-                                content: res.msg,
-                                yes: function (index) {
-                                    parent.location.reload();
-                                }
-                            })
-                        } else {
-                            layer.msg(res.msg,{icon: 5,anim: 6});
-                        }
-                    },
-                    error: function (msg) {
-                        layer.msg("用户添加失败，请联系管理员",{icon: 5,anim: 6})
-                    }
-                })
-            }
-            return false;
-        });
     });
 </script>
 </body>

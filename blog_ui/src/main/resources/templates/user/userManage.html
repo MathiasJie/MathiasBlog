@@ -20,7 +20,7 @@
         var layer = layui.layer,
             table = layui.table,
             $ = layui.jquery,
-            element = layui.element
+            element = layui.element;
         $.ajax({
             url: "/user/getUserList",
             type: "POST",
@@ -56,12 +56,47 @@
         });
         //          新增用户
         $("#addUser").click(function () {
-            parent.layer.open({
+           var index = parent.layer.open({
                 type: 2,
                 title: '添加用户',
                 skin: 'layui-layer-molv', //加上边框
-                area: ['720px', '500px'], //宽高
-                content: ['/route/addUser', 'no']//no表示不显示滚动条
+                area: ['720px', '400px'], //宽高
+                //no表示不显示滚动条
+                content: ['/route/addUser', 'no'],
+                btn:['保存'],
+                yes:function () {
+                    var body = parent.layer.getChildFrame('body',index);
+                    var username = body.find('input[name="username"]').val();
+                    var password = body.find('input[name="password"]').val();
+                    var rePassword = body.find('input[name="rePassword"]').val();
+                    
+                    if (!username) {
+                        parent.layer.msg("请填写用户名！",{icon: 5,anim: 6});
+                    } else if (!password) {
+                        parent.layer.msg("请填写密码！",{icon: 5,anim: 6});
+                    } else if (password !== rePassword) {
+                        parent.layer.msg("两次输入密码不一致！",{icon: 5,anim: 6});
+                    } else {
+                        $.ajax({
+                            url: "/user/saveOrUpdate",
+                            data: body.find('#addUser').serialize(),
+                            method: "post",
+                            dataType: 'json',
+                            success: function (res) {
+                                if (res.code === 200) {
+                                    parent.layer.msg(res.msg,{icon:1});
+                                    location.reload();
+                                    parent.layer.close(index);
+                                } else {
+                                    parent.layer.msg(res.msg,{icon: 5,anim: 6});
+                                }
+                            },
+                            error: function () {
+                                layer.msg("用户添加失败，请联系管理员",{icon: 5,anim: 6})
+                            }
+                        })
+                    }
+                }
             })
         });
 //            编辑用户
@@ -72,12 +107,35 @@
             } else if (checkStatus.data.length > 1) {
                 parent.layer.msg("只能选择一条数据进行编辑！",{icon:7,anim:6});
             } else {
-                parent.layer.open({
+                var index = parent.layer.open({
                     type: 2,
                     title: '基本资料',
                     skin: 'layui-layer-molv', //加上边框
-                    area: ['720px', '500px'], //宽高
-                    content: ['/user/userInfo?id='+ checkStatus.data[0].id, 'no']//no表示不显示滚动条
+                    area: ['720px', '400px'], //宽高
+                    //no表示不显示滚动条
+                    content: ['/user/userInfo?id='+ checkStatus.data[0].id, 'no'],
+                    btn:['确认'],
+                    yes:function () {
+                        var body = parent.layer.getChildFrame('body',index);
+                        $.ajax({
+                            url: "/user/saveOrUpdate",
+                            data: body.find("#editUser").serialize(),
+                            method: "post",
+                            dataType: 'json',
+                            success: function (res) {
+                                if (res.code === 200) {
+                                    parent.layer.msg(res.msg,{icon:1});
+                                    location.reload();
+                                    parent.layer.close(index);
+                                } else {
+                                    parent.layer.msg(res.msg, {icon: 5, anim: 6});
+                                }
+                            },
+                            error: function () {
+                                parent.layer.msg('用户修改失败', {icon: 5, anim: 6});
+                            }
+                        })
+                    }
                 })
             }
         });
@@ -97,17 +155,10 @@
                     var ids = list.join(",");
                     $.post("/user/delUserById", {ids: ids}, function (res) {
                         if (res.code === 200) {
-                        parent.layer.open({
-                                icon:1,
-                                content:res.msg,
-                                yes:function (index) {
-                                    // layer.close(index);
-                                    parent.location.reload();
-                                }
-                            })
+                            parent.layer.msg(res.msg,{icon:1});
+                            location.reload();
                         } else {
-                            parent.layer.close(index);
-                            layer.msg("删除失败，请联系管理员",{icon:5,anim:6});
+                            parent.layer.msg("删除失败，请联系管理员",{icon:5,anim:6});
                         }
                     })
                 })

@@ -40,7 +40,6 @@ public class RoleServiceImpl implements RoleService {
                 if (role != null){
                     return new ResponseHelper(500, "角色名已存在", null);
                 }
-//                默认的用户状态
                 roleBean.setAvailable(roleBean.getAvailable());
                 roleBean.setDescription(roleBean.getDescription());
                 roleBean.setCreateTime(new Date());
@@ -50,9 +49,6 @@ public class RoleServiceImpl implements RoleService {
                 RoleBean r = roleJpa.findRoleBeanById(roleBean.getId());
                 r.setDescription(roleBean.getDescription());
                 r.setUpdateTime(new Date());
-                if (roleBean.getAvailable() == null){
-                    r.setAvailable(0);
-                }
                 r.setAvailable(roleBean.getAvailable());
                 roleJpa.save(r);
             }

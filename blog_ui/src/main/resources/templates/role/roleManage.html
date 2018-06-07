@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <span th:include="common/header::header"></span>
-    <script type="text/javascript" th:src="@{/plugins/layui/layui.js}"></script>
 </head>
 <body>
 <button class="layui-btn" id="addRole">
@@ -15,89 +14,12 @@
     <label><i class="fa fa-trash-o"></i></label> 删除
 </button>
 <table id="roleManage" style='overflow:scroll;overflow-x:hidden'></table>
-
-<!--<form class="layui-form" id="editUser" th:disabled="none">-->
-    <!--<div class="layui-form-item">-->
-        <!--<div class="layui-inline">-->
-            <!--<label class="layui-form-label">角色户</label>-->
-            <!--<div class="layui-input-inline">-->
-                <!--<input type="text" name="name" autocomplete="off"-->
-                       <!--class="layui-input" th:value="${roleInfo.getName()}" disabled/>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div class="layui-inline">-->
-            <!--<label class="layui-form-label">角色描述</label>-->
-            <!--<div class="layui-input-inline">-->
-                <!--<input type="text" name="description" autocomplete="off"-->
-                       <!--class="layui-input" th:value="${roleInfo.getDescription()}"/>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
-
-    <!--<div class="layui-form-item" pane="">-->
-        <!--<label class="layui-form-label">是否有效</label>-->
-        <!--<div class="layui-input-block">-->
-            <!--<input type="checkbox" th:checked="${roleInfo.getAvailable() == 1}" name="available" lay-skin="switch" lay-text="有效|无效">-->
-        <!--</div>-->
-    <!--</div>-->
-
-
-    <!--<input type="hidden" name="id" th:value="${roleInfo.getId()}"/>-->
-
-    <!--<div class="layui-form-item">-->
-        <!--<div class="layui-input-block">-->
-            <!--<button class="layui-btn" lay-submit="" lay-filter="saveRole">保存</button>-->
-            <!--<button type="reset" class="layui-btn layui-btn-primary">清空</button>-->
-        <!--</div>-->
-    <!--</div>-->
-<!--</form>-->
-<div id="insertRole" style="display:none" >
-<form class="layui-form" id="addRoleForm" >
-    <div class="layui-form-item" style="margin: 10px" >
-        <div class="layui-inline">
-            <label class="layui-form-label">角色名</label>
-            <div class="layui-input-inline">
-                <input type="text" name="name" autocomplete="off" class="layui-input"
-                       placeholder="角色名"/>
-            </div>
-        </div>
-        <div class="layui-inline">
-            <label class="layui-form-label">角色描述</label>
-            <div class="layui-input-inline">
-                <input type="text" name="description" autocomplete="off"
-                       class="layui-input" placeholder="角色描述"/>
-            </div>
-        </div>
-    </div>
-    <div class="layui-form-item" pane="">
-        <label class="layui-form-label">是否有效</label>
-        <div class="layui-input-block">
-            <input type="checkbox" checked="" name="available" value="1" lay-skin="switch" lay-text="有效|无效" />
-        </div>
-    </div>
-
-    <!--<div class="layui-form-item">-->
-        <!--<div class="layui-input-block">-->
-            <!--<button class="layui-btn" lay-submit="" lay-filter="addRole">保存</button>-->
-            <!--<button type="reset" class="layui-btn layui-btn-primary">清空</button>-->
-        <!--</div>-->
-    <!--</div>-->
-</form>
-    <!--<script>-->
-        <!--layui.use(['jquery','table','layer','form','element'], function(){-->
-            <!--var $ = layui.jquery;-->
-            <!--var table = layui.table;-->
-            <!--var layer=layui.layer;-->
-            <!--var form=layui.form;-->
-            <!--var element=layui.element;-->
-        <!--})-->
-    <!--</script>-->
-</div>
+<script type="text/javascript" th:src="@{/plugins/layui/layui.js}"></script>
 <script type="text/javascript" th:src="@{/utils/dateUtil.js}"></script>
 <script type="text/javascript">
-    layui.use(['jquery', 'laypage', 'table','element'], function () {
+    layui.use(['jquery','layer', 'laypage','form', 'table','element'], function () {
         //弹层
-        var
+        var form = layui.form,
             table = layui.table,
             $ = layui.jquery,
             element = layui.element;
@@ -132,38 +54,28 @@
         //          新增角色
         $("#addRole").click(function () {
           var index = parent.layer.open({
-                type: 1,
+                type: 2,
                 title: '添加角色',
                 skin: 'layui-layer-molv', //加上边框
                 area: ['450px', '260px'], //宽高
-                content:$("#insertRole").html(),
+                content:['/route/addRole','no'],
                 btn:['保存'],
-                btn1:function () {
-
-                    var name =  parent.$("input[name='name']").val();
-                    // var description =  parent.$("input[name='description']").val();
-                    // var available =  parent.$("input[name='available']").val();
-
+                yes:function () {
+                    var body = parent.layer.getChildFrame('body',index);
+                    var name =  body.find("input[name='name']").val();
                     if (!name){
                         parent.layer.msg("请填写角色名！",{icon:5,anim:6});
                     }
-
-                    console.log(parent.$("#addRoleForm").serialize());
+                    console.log(body.find("#addRoleForm").serialize());
                     $.ajax({
                         url: "/role/saveOrUpdate",
-                        data: parent.$("#addRoleForm").serialize(),
+                        data: body.find("#addRoleForm").serialize(),
                         method: "post",
                         dataType: 'json',
                         success: function (res) {
                             if (res.code === 200) {
-                                parent.layer.open({
-                                    icon:1,
-                                    content: res.msg,
-                                    yes: function (index) {
-                                        location.reload();
-                                        parent.layer.close(index);
-                                    }
-                                });
+                                parent.layer.msg(res.msg,{icon:1});
+                                location.reload();
                                 parent.layer.close(index);
                             } else {
                                 parent.layer.msg(res.msg,{icon: 5,anim: 6});
@@ -185,13 +97,36 @@
             } else if (checkStatus.data.length > 1) {
                 parent.layer.msg("只能选择一条数据进行编辑！",{icon:7,anim:6});
             } else {
-                // layer.open({
-                //     type: 2,
-                //     title: '基本资料',
-                //     skin: 'layui-layer-molv', //加上边框
-                //     area: ['720px', '500px'], //宽高
-                //     content: ['/role/roleInfo?id='+ checkStatus.data[0].id, 'no']//no表示不显示滚动条
-                // })
+                var index = parent.layer.open({
+                    type: 2,
+                    title: '基本资料',
+                    skin: 'layui-layer-molv', //加上边框
+                    area: ['450px', '260px'], //宽高
+                    //no表示不显示滚动条
+                    content: ['/role/roleInfo?id='+ checkStatus.data[0].id, 'no'],
+                    btn:['确认'],
+                    yes:function () {
+                        var body = parent.layer.getChildFrame('body',index);
+                        $.ajax({
+                            url: "/role/saveOrUpdate",
+                            data: body.find("#editUser").serialize(),
+                            method: "post",
+                            dataType: 'json',
+                            success: function (res) {
+                                if (res.code === 200) {
+                                    parent.layer.msg(res.msg,{icon:1});
+                                    location.reload();
+                                    parent.layer.close(index);
+                                } else {
+                                    parent.layer.msg(res.msg, {icon: 5, anim: 6});
+                                }
+                            },
+                            error: function () {
+                                parent.layer.msg("角色修改失败，请联系管理员",{icon: 5,anim: 6})
+                            }
+                        })
+                    }
+                })
             }
         });
 //            删除角色

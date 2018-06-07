@@ -23,19 +23,14 @@
     <div class="layui-form-item" pane="">
         <label class="layui-form-label">是否有效</label>
         <div class="layui-input-block">
-            <input type="checkbox" th:checked="${roleInfo.getAvailable() == 1}" name="available" lay-skin="switch" lay-text="有效|无效">
+            <input type="checkbox" th:checked="${roleInfo.getAvailable() == 1}" value="1"
+                   name="available" lay-skin="switch" lay-text="有效|无效">
         </div>
     </div>
 
 
     <input type="hidden" name="id" th:value="${roleInfo.getId()}"/>
 
-    <div class="layui-form-item">
-        <div class="layui-input-block">
-            <button class="layui-btn" lay-submit="" lay-filter="saveRole">保存</button>
-            <button type="reset" class="layui-btn layui-btn-primary">清空</button>
-        </div>
-    </div>
 </form>
 <script type="text/javascript" th:inline="none" th:src="@{/plugins/layui/layui.js}"></script>
 <script type="text/javascript">
@@ -44,57 +39,7 @@
         var layer = layui.layer,
             $ = layui.jquery,
             form = layui.form,
-            element = layui.element,
-            laydate = layui.laydate
-        //日期
-        laydate.render({
-            elem: '#birthday'
-        });
-        form.on('submit(saveRole)', function (data) {
-            if (data.field.available =="on") {
-                data.field.available=1;
-            }
-            $.ajax({
-                url: "/role/saveOrUpdate",
-                data: data.field,
-                method: "post",
-                dataType: 'json',
-                success: function (res) {
-                    if (res.code === 200) {
-                        layer.open({
-                            icon: 1,
-                            content: res.msg,
-                            yes: function (index) {
-                                parent.location.reload();
-                            }
-                        })
-                    } else {
-                        layer.msg(res.msg, {icon: 5, anim: 6});
-                    }
-                },
-                error: function (res) {
-                    layer.msg(res.msg, {icon: 5, anim: 6});
-                }
-            })
-            return false;
-        });
-
-        // //执行图片上传实例
-        // upload.render({
-        //     elem: '#upload', //绑定元素
-        //     url: '/user/upload',//上传接口
-        //     accept: 'images',
-        //     // auto:false,
-        //     // bindAction:'#saveUser',
-        //     data: {id: $("input[name='id']").val()},
-        //     done: function (res) {
-        //         //上传完毕回调
-        //         // if (res.msg==="")
-        //         top.layer.msg(res.msg);
-        //     }
-        // });
-
-
+            element = layui.element;
     })
 </script>
 

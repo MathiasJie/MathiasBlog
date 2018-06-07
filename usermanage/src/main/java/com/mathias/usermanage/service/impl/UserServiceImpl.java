@@ -68,8 +68,9 @@ public class UserServiceImpl implements UserService {
                 u.setUpdateTime(new Date());
                 if (userBean.getStatus() == null){
                     u.setStatus(0);
+                }else{
+                    u.setStatus(userBean.getStatus());
                 }
-                u.setStatus(userBean.getStatus());
                 userJpa.save(u);
             }
         } catch (Exception e) {
