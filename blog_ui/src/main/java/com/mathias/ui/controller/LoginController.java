@@ -27,7 +27,6 @@ public class LoginController {
     public ResponseHelper signin(UserBean userBean, HttpServletRequest request){
         String ipAddress = CusAccessObjectUtil.getIpAddress(request);
         ResponseHelper response = loginService.signin(userBean,ipAddress);
-       log.info(response.toString());
         return loginService.signin(userBean, ipAddress);
     }
 
